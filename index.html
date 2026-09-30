@@ -1,0 +1,56 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đỗ Hoàng Nghĩa</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 30px;
+      }
+
+      textarea,
+      input {
+        width: 450px;
+        padding: 10px;
+        font-size: 18px;
+        box-sizing: border-box;
+      }
+
+      .count {
+        color: #d33;
+        font-size: 22px;
+        margin: 10px 0 25px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h2>Textarea</h2>
+    <textarea id="textarea" maxlength="140" placeholder="jQueryScript.Net"></textarea>
+    <div class="count">Max <span id="text-count">0</span> / 140</div>
+
+    <h2>Input Field</h2>
+    <input type="text" id="input" maxlength="20" placeholder="jQueryScript.Net"/>
+    <div class="count">Maximum <span id="input-count">0</span> / 20</div>
+
+    <script>
+      // Textarea
+      const textarea = document.querySelector("#textarea");
+      const textCount = document.querySelector("#text-count");
+
+      textarea.addEventListener("input", function () {
+        textCount.textContent = textarea.value.length;
+      });
+
+      // Input
+      const input = document.querySelector("#input");
+      const inputCount = document.querySelector("#input-count");
+
+      input.addEventListener("input", function () {
+        inputCount.textContent = input.value.length;
+      });
+    </script>
+  </body>
+</html>
