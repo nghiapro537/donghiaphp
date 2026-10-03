@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh Sách Đi Chợ</title>
+    <style>
+      body {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 16px;
+        line-height: 1.6;
+      }
+
+      .demo-box {
+        border: 1px solid #cfc9c9;
+        border-radius: 8px;
+        padding: 12px;
+      }
+
+      input {
+        flex: 1;
+        padding: 8px 12px;
+      }
+
+      form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+
+      li:hover {
+        background-color: #ede5e5;
+      }
+
+      .da-mua {
+        text-decoration: line-through;
+        color: #343434;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="demo-box">
+      <h2>Danh Sách Đi Chợ</h2>
+
+      <form id="form">
+        <input type="text" id="o-ten" placeholder="Nhập tên món + Enter..." />
+        <button type="submit">Thêm</button>
+      </form>
+
+      <ul id="ds"></ul>
+
+      <div class="thong-ke" id="thong-ke">Còn 0/0 món chưa mua</div>
+    </div>
+
+    <script>
+      const form = document.querySelector("#form");
+      const oTen = document.querySelector("#o-ten");
+      const ds = document.querySelector("#ds");
+      const thongKe = document.querySelector("#thong-ke");
+
+      let danhSachMon = JSON.parse(localStorage.getItem("danhSachDiCho")) || [];
+
+      function hienThiDanhSach() {
+        ds.innerHTML = ""; // Xóa sạch danh sách cũ trên giao diện trước khi vẽ lại
+
+        let soMonChuaMua = 0;
+
+        danhSachMon.forEach((mon, index) => {
+          // Tạo thẻ <li> mới
+          const li = document.createElement("li");
+          li.textContent = mon.ten;
+
+          // Nếu món này đã mua -> thêm class 'da-mua' để gạch ngang
+          if (mon.daMua) {
+            li.classList.add("da-mua");
+          } else {
+            soMonChuaMua++; // Đếm món chưa mua
+          }
+
+          // SỰ KIỆN 1: Bấm 1 lần -> Đánh dấu / Bỏ đánh dấu
+          li.addEventListener("click", () => {
+            mon.daMua = !mon.daMua; // Đảo trạng thái true <-> false
+            luuVaCapNhat();
+          });
+
+          // SỰ KIỆN 2: Nháy đúp (dblclick) -> Xóa món
+          li.addEventListener("dblclick", () => {
+            danhSachMon.splice(index, 1); // Xóa món khỏi mảng theo vị trí index
+            luuVaCapNhat();
+          });
+
+          ds.append(li);
+        });
+
+        // Cập nhật dòng chữ thống kê
+        thongKe.textContent = `Còn ${soMonChuaMua}/${danhSachMon.length} món chưa mua`;
+      }
+
+      // HÀM LƯU VÀO LOCALSTORAGE VÀ LÀM MỚI GIAO DIỆN
+      function luuVaCapNhat() {
+        localStorage.setItem("danhSachDiCho", JSON.stringify(danhSachMon));
+        hienThiDanhSach();
+      }
+
+      // XỬ LÝ SỰ KIỆN SUBMIT FORM (Nhấn nút hoặc gõ Enter)
+      form.addEventListener("submit", (e) => {
+        e.preventDefault(); // Chặn tải lại trang
+
+        const tenMon = oTen.value.trim();
+        if (tenMon === "") return; // Nếu tên rỗng thì bỏ qua
+
+        // Thêm món mới vào mảng dạng Object
+        danhSachMon.push({
+          ten: tenMon,
+          daMua: false,
+        });
+
+        luuVaCapNhat(); // Lưu lại và cập nhật giao diện
+
+        oTen.value = ""; // Dọn sạch ô nhập
+        oTen.focus(); // Con trỏ chuột sẵn sàng nhập tiếp
+      });
+
+      // HIỂN THỊ DỮ LIỆU BAN ĐẦU KHI MỚI MỞ TRANG
+      hienThiDanhSach();
+    </script>
+  </body>
+</html>
